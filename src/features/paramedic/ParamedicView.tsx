@@ -1,19 +1,21 @@
-import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { emergencyApi } from '../../services/api';
-import { Emergency } from '../../types';
-import { IncidentCard } from './IncidentCard';
-import { IncidentDetails } from './IncidentDetails';
-import { LoadingSpinner } from '../../components/LoadingSpinner';
-import { AlertCircle, Filter } from 'lucide-react';
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { emergencyApi } from "../../services/api";
+import { Emergency } from "../../types";
+import { IncidentCard } from "./IncidentCard";
+import { IncidentDetails } from "./IncidentDetails";
+import { LoadingSpinner } from "../../components/LoadingSpinner";
+import { AlertCircle, Filter } from "lucide-react";
 
 export function ParamedicView() {
-  const [selectedIncident, setSelectedIncident] = useState<Emergency | null>(null);
-  const [filter, setFilter] = useState<'all' | 'active' | 'assigned'>('active');
+  const [selectedIncident, setSelectedIncident] = useState<Emergency | null>(
+    null,
+  );
+  const [filter, setFilter] = useState<"all" | "active" | "assigned">("active");
 
   // Fetch all emergencies with real-time updates
   const { data, isLoading } = useQuery({
-    queryKey: ['emergencies'],
+    queryKey: ["emergencies"],
     queryFn: async () => {
       const response = await emergencyApi.getAll();
       return response.data;
@@ -24,12 +26,12 @@ export function ParamedicView() {
   const emergencies = data || [];
 
   // Filter emergencies
-  const filteredEmergencies = emergencies.filter(e => {
-    if (filter === 'active') {
-      return e.status !== 'resolved' && e.status !== 'cancelled';
+  const filteredEmergencies = emergencies.filter((e) => {
+    if (filter === "active") {
+      return e.status !== "resolved" && e.status !== "cancelled";
     }
-    if (filter === 'assigned') {
-      return e.assignedParamedicId !== undefined && e.status !== 'resolved';
+    if (filter === "assigned") {
+      return e.assignedParamedicId !== undefined && e.status !== "resolved";
     }
     return true;
   });
@@ -43,20 +45,22 @@ export function ParamedicView() {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-6">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-4 sm:pt-6 pb-6 sm:pb-12">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           {/* Incident List */}
           <div className="space-y-4">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl text-gray-900 dark:text-white">Incident Queue</h2>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3 sm:p-4">
+              <div className="flex items-center justify-between mb-3 sm:mb-4 gap-2">
+                <h2 className="text-lg sm:text-xl text-gray-900 dark:text-white">
+                  Incident Queue
+                </h2>
                 <div className="flex items-center gap-2">
-                  <Filter className="size-4 text-gray-500 dark:text-gray-400" />
+                  <Filter className="size-4 text-gray-500 dark:text-gray-400 hidden sm:block" />
                   <select
                     value={filter}
                     onChange={(e) => setFilter(e.target.value as typeof filter)}
-                    className="text-sm px-3 py-1.5 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+                    className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 min-h-[44px]"
                   >
                     <option value="all">All Incidents</option>
                     <option value="active">Active Only</option>
@@ -71,18 +75,17 @@ export function ParamedicView() {
                 </div>
               ) : sortedEmergencies.length === 0 ? (
                 <div className="text-center py-12">
-                  <AlertCircle className="size-12 text-gray-400 dark:text-gray-600 mx-auto mb-4" />
-                  <p className="text-gray-600 dark:text-gray-400">
-                    {filter === 'active' 
-                      ? 'No active incidents'
-                      : filter === 'assigned'
-                      ? 'No assigned incidents'
-                      : 'No incidents found'
-                    }
+                  <AlertCircle className="size-10 sm:size-12 text-gray-400 dark:text-gray-600 mx-auto mb-4" />
+                  <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
+                    {filter === "active"
+                      ? "No active incidents"
+                      : filter === "assigned"
+                        ? "No assigned incidents"
+                        : "No incidents found"}
                   </p>
                 </div>
               ) : (
-                <div className="space-y-3 max-h-[calc(100vh-300px)] overflow-y-auto">
+                <div className="space-y-2 sm:space-y-3 max-h-[calc(100vh-350px)] sm:max-h-[calc(100vh-300px)] overflow-y-auto">
                   {sortedEmergencies.map((emergency) => (
                     <IncidentCard
                       key={emergency.id}
@@ -96,26 +99,39 @@ export function ParamedicView() {
             </div>
 
             {/* Stats Summary */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4">
-              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Queue Summary</h3>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3 sm:p-4">
+              <h3 className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                Queue Summary
+              </h3>
               <div className="grid grid-cols-3 gap-4">
                 <div className="text-center">
                   <div className="text-2xl text-red-600 dark:text-red-400 mb-1">
-                    {emergencies.filter(e => e.status === 'requested').length}
+                    {emergencies.filter((e) => e.status === "requested").length}
                   </div>
-                  <div className="text-xs text-gray-600 dark:text-gray-400">Unassigned</div>
+                  <div className="text-xs text-gray-600 dark:text-gray-400">
+                    Unassigned
+                  </div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl text-blue-600 dark:text-blue-400 mb-1">
-                    {emergencies.filter(e => e.status === 'assigned' || e.status === 'on-the-way').length}
+                    {
+                      emergencies.filter(
+                        (e) =>
+                          e.status === "assigned" || e.status === "on-the-way",
+                      ).length
+                    }
                   </div>
-                  <div className="text-xs text-gray-600 dark:text-gray-400">In Progress</div>
+                  <div className="text-xs text-gray-600 dark:text-gray-400">
+                    In Progress
+                  </div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl text-green-600 dark:text-green-400 mb-1">
-                    {emergencies.filter(e => e.status === 'resolved').length}
+                    {emergencies.filter((e) => e.status === "resolved").length}
                   </div>
-                  <div className="text-xs text-gray-600 dark:text-gray-400">Resolved</div>
+                  <div className="text-xs text-gray-600 dark:text-gray-400">
+                    Resolved
+                  </div>
                 </div>
               </div>
             </div>
